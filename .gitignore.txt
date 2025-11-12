@@ -1,0 +1,21 @@
+# Службова папка Visual Studio
+.vs/
+
+# Бінарні файли та логи
+*.exe
+*.dll
+*.obj
+*.ilk
+*.log
+
+# Папки збірки
+Debug/
+Release/
+x64/
+x86/
+packages/
+
+# Звіти та налаштування
+*.user
+*.suo
+test_report.xml
