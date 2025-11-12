@@ -1,0 +1,42 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Використовуємо 'git' для клонування репозиторію
+                git url: 'https://github.com/bohdankaaa6-web/jenkins-ci-project.git', branch: 'main'
+                // 
+            }
+        }
+
+        stage('Build') {
+            steps {
+                // Виклик MSBuild для компіляції рішення
+                // MSBuild.exe був налаштований
+                msbuild buildFile: 'test_repos.sln', 
+                        configuration: 'Debug', 
+                        // Використовуйте ім'я, яке ви дали в Global Tool Configuration
+                        msbuildName: 'VS2022_Community' 
+            }
+        }
+
+        stage('Test & Report') {
+            steps {
+                // Запуск скомпільованого .exe, який генерує test_report.xml
+                bat 'x64\\Debug\\test_repos.exe --gtest_output="xml:x64/Debug/test_report.xml"'
+            }
+        }
+    }
+
+    post {
+        always {
+            // Публікація результатів тестів
+            xunit {
+                tools {
+                    GoogleTest(deleteOutputFiles: true, failIfNotNew: false, pattern: 'x64/Debug/test_report.xml', skipNoTestFiles: false, stopProcessingIfError: true)
+                }
+            }
+        }
+    }
+}
